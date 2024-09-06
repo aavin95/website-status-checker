@@ -28,5 +28,5 @@ export async function GET(request, { params }) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     await checkStatus();
-    return NextResponse.json(JSON.stringify(statuses), { status: 200 });
+    return NextResponse.json(statuses, { status: 200 });
 }
