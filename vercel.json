@@ -4,10 +4,5 @@
       "path": "/api/cron",
       "schedule": "0 10 * * *"
     }
-  ],
-  "build": {
-    "env": {
-      "CRON_SECRET": "@cron-secret"
-    }
-  }
+  ]
 }
