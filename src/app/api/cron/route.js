@@ -1,8 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { NextResponse } from 'next/server';
-
-let statuses = [];
+import axios from 'axios';
 
 const websites = [
     'https://goodreads-book-selector.vercel.app/',
@@ -10,7 +9,7 @@ const websites = [
 ];
 
 const checkStatus = async () => {
-    statuses = await Promise.all(
+    const statuses = await Promise.all(
         websites.map(async (url) => {
             try {
                 const response = await axios.get(url);
@@ -20,6 +19,10 @@ const checkStatus = async () => {
             }
         })
     );
+
+    // Save statuses to file
+    const filePath = path.join(process.cwd(), 'statuses.json');
+    await fs.writeFile(filePath, JSON.stringify(statuses), 'utf-8');
     console.log('Statuses updated:', statuses);
 };
 
@@ -27,6 +30,7 @@ export async function GET(request, { params }) {
     if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
         return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
+
     await checkStatus();
-    return NextResponse.json(statuses, { status: 200 });
+    return NextResponse.json({ message: 'Status updated' }, { status: 200 });
 }
