@@ -4,7 +4,10 @@ import { NextResponse } from 'next/server';
 
 let statuses = [];
 
-const websites = [];
+const websites = [
+    'https://goodreads-book-selector.vercel.app/',
+    'https://andrew-vincent.vercel.app/'
+];
 
 const checkStatus = async () => {
     statuses = await Promise.all(
@@ -21,6 +24,9 @@ const checkStatus = async () => {
 };
 
 export async function GET(request, { params }) {
+    if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+        return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     await checkStatus();
     return NextResponse.json(JSON.stringify(statuses), { status: 200 });
 }
